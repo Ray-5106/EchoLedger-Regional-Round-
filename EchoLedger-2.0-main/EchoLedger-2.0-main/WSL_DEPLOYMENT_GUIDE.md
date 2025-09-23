@@ -1,7 +1,7 @@
-//THIS WAS A CHECKLIST USED BY MY TEAM//
-//NOT FOR SUBMISSION//
 
 # 🚀 EchoLedger WSL Deployment Guide - Step by Step
+# //THIS WAS A CHECKLIST USED BY MY TEAM// #
+# //NOT FOR SUBMISSION// #
 
 ## 📋 Complete Guide: From WSL Setup to ICP Mainnet Deployment
 
@@ -342,3 +342,4 @@ npm install
 npm run build
 cd ..
 ```
+
