@@ -1,0 +1,66 @@
+type OrganAvailability = record {
+    organ_type: text;
+    blood_type: text;
+    hla_typing: vec text;
+    organ_condition: text;
+    time_since_harvest: nat64;
+    location: text;
+    viability_score: float32;
+};
+
+type RecipientMatch = record {
+    recipient_id: text;
+    organ: text;
+    compatibility_score: float32;
+    urgency_level: nat8;
+    distance_km: nat32;
+    transplant_center: text;
+    notification_sent: bool;
+    estimated_survival_benefit: float32;
+};
+
+type DirectiveExecution = record {
+    directive_type: text;
+    execution_status: text;
+    organs_processed: vec text;
+    recipient_matches: vec RecipientMatch;
+    total_recipients_notified: nat32;
+    estimated_lives_saved: nat32;
+    data_shared_with: vec text;
+    anonymization_verified: bool;
+    research_impact_score: float32;
+};
+
+type ExecutionResult = record {
+    execution_id: text;
+    patient_id: text;
+    directives_executed: vec DirectiveExecution;
+    total_execution_time_ms: nat64;
+    blockchain_verification: text;
+    audit_log_created: bool;
+    compliance_verified: bool;
+};
+
+type OrganNetworkAlert = record {
+    alert_id: text;
+    network: text;
+    transplant_center: text;
+    organ: text;
+    recipient: text;
+    alert_time: text;
+    delivery_status: text;
+    response_time_ms: nat32;
+};
+
+service : {
+    // Main function for autonomous death directive execution
+    execute_death_directives: (text) -> (variant { Ok: ExecutionResult; Err: text });
+    
+    // Get organ network alerts for monitoring
+    get_organ_network_alerts: (text) -> (variant { Ok: vec OrganNetworkAlert; Err: text }) query;
+    
+    // Query functions for monitoring
+    get_execution_history: () -> (vec ExecutionResult) query;
+    get_supported_organ_networks: () -> (vec text) query;
+    get_research_institutions: () -> (vec text) query;
+}

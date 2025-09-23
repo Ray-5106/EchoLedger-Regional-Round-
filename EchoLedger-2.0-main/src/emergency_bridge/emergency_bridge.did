@@ -1,0 +1,53 @@
+type EmergencyRequest = record {
+    patient_id: text;
+    hospital_id: text;
+    situation: text;
+    vitals: opt text;
+    access_token: opt text;
+};
+
+type EmergencyResponse = record {
+    action_required: bool;
+    directive_type: text;
+    message: text;
+    confidence_score: float32;
+    timestamp: nat64;
+};
+
+type ImpactMetrics = record {
+    total_directives_processed: nat32;
+    emergency_responses_served: nat32;
+    average_response_time_ms: nat32;
+    organs_successfully_coordinated: nat32;
+    estimated_lives_saved: nat32;
+    medical_waste_prevented_usd: nat32;
+    hipaa_compliance_rate: float32;
+    ai_confidence_average: float32;
+    system_uptime_percentage: float32;
+    countries_deployed: nat32;
+    hospitals_integrated: nat32;
+    data_breach_incidents: nat32;
+};
+
+service : {
+    // Main emergency check function for competition demo
+    emergency_check: (EmergencyRequest) -> (variant { Ok: EmergencyResponse; Err: text });
+    
+    // Get recent emergency alerts for monitoring
+    get_recent_alerts: (nat32) -> (vec EmergencyRequest) query;
+    
+    // Get impact metrics for demo dashboard
+    get_impact_metrics: () -> (ImpactMetrics) query;
+    
+    // HIPAA compliance verification
+    verify_hipaa_compliance: (text) -> (variant { Ok: bool; Err: text }) query;
+    
+    // Get audit trail for patient
+    get_audit_trail: (text) -> (vec text) query;
+    
+    // Verify signature authenticity using threshold ECDSA
+    verify_signature_authenticity: (text, text) -> (variant { Ok: bool; Err: text });
+    
+    // Legacy function for backward compatibility
+    process_emergency_request: (EmergencyRequest) -> (variant { Ok: EmergencyResponse; Err: text });
+}

@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "canisters": {
+    "directive_manager": {
+      "type": "motoko",
+      "main": "src/directive_manager/main.mo"
+    },
+    "emergency_bridge": {
+      "type": "rust",
+      "package": "emergency_bridge",
+      "candid": "src/emergency_bridge/emergency_bridge.did"
+    },
+    "executor_ai": {
+      "type": "rust",
+      "package": "executor_ai",
+      "candid": "src/executor_ai/executor_ai.did"
+    },
+    "llm_canister": {
+      "type": "rust",
+      "package": "llm_canister",
+      "candid": "src/llm_canister/llm_canister.did"
+    }
+  },
+  "networks": {
+    "local": {
+      "bind": "127.0.0.1:4943",
+      "type": "ephemeral"
+    },
+    "ic": {
+      "providers": ["https://ic0.app"],
+      "type": "persistent"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "output_env_file": ".env"
+}

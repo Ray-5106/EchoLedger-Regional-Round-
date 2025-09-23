@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EchoLedger - Autonomous Health Directive Executor</title>
+    <style>
+        /* ==================== GLOBAL STYLES ==================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #f0f4f8 0%, #e6eef5 100%);
+            color: #2d3748;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* ==================== HEADER ==================== */
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px 0;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 20px;
+        }
+
+        .logo-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #3182ce 0%, #4c51bf 100%);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            box-shadow: 0 4px 15px rgba(49, 130, 206, 0.3);
+            color: white;
+        }
+
+        .logo-text {
+            text-align: left;
+        }
+
+        .logo-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #1a202c;
+            margin: 0;
+            background: linear-gradient(135deg, #1a202c 0%, #4a5568 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .logo-subtitle {
+            font-size: 1rem;
+            color: #718096;
+            margin: 0;
+            font-weight: 500;
+        }
+
+        .status-bar {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(45, 196, 123, 0.15);
+            border: 1px solid rgba(45, 196, 123, 0.3);
+            border-radius: 20px;
+            padding: 0.5rem 1rem;
+            color: #2dc47b;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #2dc47b;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        /* ==================== TABS ==================== */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+        .tab {
+            padding: 1rem 2rem;
+            background: white;
+            border: none;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #718096;
+            border-bottom: 3px solid transparent;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .tab.active {
+            color: #3182ce;
+            border-bottom-color: #3182ce;
+            background: linear-gradient(135deg, rgba(49, 130, 206, 0.05), rgba(76, 81, 191, 0.05));
+        }
+
+        /* ==================== CARDS ==================== */
+        .card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.5rem 2rem;
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .header-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #3182ce 0%, #4c51bf 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 15px rgba(49, 130, 206, 0.2);
+            color: white;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1a202c;
+            margin: 0;
+        }
+
+        .card-content {
+            padding: 2rem;
+        }
+
+        /* ==================== FORMS ==================== */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #1a202c;
+            font-size: 0.9rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1rem;
+            background: white;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #3182ce;
+            box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        /* ==================== BUTTONS ==================== */
+        .btn {
+            background: linear-gradient(135deg, #3182ce 0%, #4c51bf 100%);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            box-shadow: 0 5px 20px rgba(49, 130, 206, 0.3);
+        }
+
+        .btn:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(49, 130, 206, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-emergency {
+            background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+            box-shadow: 0 5px 20px rgba(229, 62, 62, 0.3);
+        }
+
+        .btn-emergency:hover:not(:disabled) {
+            box-shadow: 0 10px 30px rgba(229, 62, 62, 0.4);
+        }
+
+        .btn-ai {
+            background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
+            box-shadow: 0 5px 20px rgba(49, 130, 206, 0.3);
+        }
+
+        .btn-ai:hover:not(:disabled) {
+            box-shadow: 0 10px 30px rgba(49, 130, 206, 0.4);
+        }
+
+        .btn-organ {
+            background: linear-gradient(135deg, #38a169 0%, #2f855a 100%);
+            box-shadow: 0 5px 20px rgba(56, 161, 105, 0.3);
+        }
+
+        .btn-organ:hover:not(:disabled) {
+            box-shadow: 0 10px 30px rgba(56, 161, 105, 0.4);
+        }
+
+        /* ==================== RESULTS ==================== */
+        .result {
+            margin-top: 1.5rem;
+            border-radius: 12px;
+            padding: 1.5rem;
+            border-left: 4px solid #3182ce;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        .result.critical {
+            background: linear-gradient(135deg, #fff5f5 0%, #fed7d7 100%);
+            border-left-color: #e53e3e;
+        }
+
+        .result.success {
+            background: linear-gradient(135deg, #f0fff4 0%, #c6f6d5 100%);
+            border-left-color: #38a169;
+        }
+
+        .result.warning {
+            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+            border-left-color: #d69e2e;
+        }
+
+        .result.info {
+            background: linear-gradient(135deg, #ebf8ff 0%, #bee3f8 100%);
+            border-left-color: #3182ce;
+        }
+
+        .result-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .result-icon {
+            font-size: 1.5rem;
+        }
+
+        .result-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #1a202c;
+        }
+
+        .result-message {
+            font-size: 1rem;
+            color: #4a5568;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+
+        /* ==================== LOADING ==================== */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        /* ==================== ANIMATIONS ==================== */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ==================== RESPONSIVE ==================== */
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .tabs {
+                flex-direction: column;
+            }
+            
+            .tab {
+                width: 100%;
+                text-align: center;
+            }
+            
+            .card-content {
+                padding: 1rem;
+            }
+            
+            .status-bar {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo-section">
+                <div class="logo-icon">📡</div>
+                <div class="logo-text">
+                    <h1 class="logo-title">EchoLedger</h1>
+                    <p class="logo-subtitle">Autonomous Health Directive Executor</p>
+                </div>
+            </div>
+            
+            <div class="status-bar">
+                <div class="status-item">
+                    <span class="status-dot"></span>
+                    <span>System Online</span>
+                </div>
+                <div class="status-item">
+                    <span>🔒 HIPAA Compliant</span>
+                </div>
+                <div class="status-item">
+                    <span>🌐 Standalone Demo</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" data-tab="emergency">🚨 Emergency ER</button>
+            <button class="tab" data-tab="directive">🧠 AI Processing</button>
+            <button class="tab" data-tab="organ">🫀 Organ Coordination</button>
+        </div>
+
+        <!-- Emergency Dashboard -->
+        <div class="tab-content" id="emergency-tab">
+            <div class="card">
+                <div class="card-header">
+                    <div class="header-icon">🚨</div>
+                    <h2 class="card-title">Emergency Directive Check</h2>
+                </div>
+                <div class="card-content">
+                    <div class="form-group">
+                        <label for="patientId">Patient ID</label>
+                        <input type="text" id="patientId" class="form-control" placeholder="e.g., patient_001" value="patient_001">
+                    </div>
+                    <div class="form-group">
+                        <label for="situation">Emergency Situation</label>
+                        <select id="situation" class="form-control">
+                            <option value="cardiac_arrest">Cardiac Arrest</option>
+                            <option value="respiratory_failure">Respiratory Failure</option>
+                            <option value="stroke">Stroke</option>
+                            <option value="trauma">Major Trauma</option>
+                        </select>
+                    </div>
+                    <button id="emergencyCheckBtn" class="btn btn-emergency">
+                        <span id="emergencyBtnText">Check Emergency Directive</span>
+                    </button>
+                    <div id="emergencyResult"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Directive Processor -->
+        <div class="tab-content" id="directive-tab" style="display: none;">
+            <div class="card">
+                <div class="card-header">
+                    <div class="header-icon">🧠</div>
+                    <h2 class="card-title">AI Directive Processing</h2>
+                </div>
+                <div class="card-content">
+                    <div class="form-group">
+                        <label for="directiveText">Natural Language Directive</label>
+                        <textarea id="directiveText" class="form-control" placeholder="Enter patient's directive in natural language...">I, John Doe, do not want to be resuscitated if I have less than 10% chance of meaningful recovery. Please donate my organs to help others.</textarea>
+                    </div>
+                    <button id="processDirectiveBtn" class="btn btn-ai">
+                        <span id="directiveBtnText">Process with AI</span>
+                    </button>
+                    <div id="directiveResult"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Organ Coordination -->
+        <div class="tab-content" id="organ-tab" style="display: none;">
+            <div class="card">
+                <div class="card-header">
+                    <div class="header-icon">🫀</div>
+                    <h2 class="card-title">Organ Coordination</h2>
+                </div>
+                <div class="card-content">
+                    <div class="form-group">
+                        <label for="organPatientId">Patient ID</label>
+                        <input type="text" id="organPatientId" class="form-control" placeholder="e.g., patient_002" value="patient_002">
+                    </div>
+                    <button id="executeOrganBtn" class="btn btn-organ">
+                        <span id="organBtnText">Execute Organ Directive</span>
+                    </button>
+                    <div id="organResult"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab switching functionality
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Remove active class from all tabs
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                // Add active class to clicked tab
+                tab.classList.add('active');
+                
+                // Hide all tab content
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.style.display = 'none';
+                });
+                
+                // Show corresponding tab content
+                const tabId = tab.getAttribute('data-tab');
+                document.getElementById(`${tabId}-tab`).style.display = 'block';
+            });
+        });
+
+        // Utility functions
+        function showLoading(buttonId, textId) {
+            const button = document.getElementById(buttonId);
+            const text = document.getElementById(textId);
+            button.disabled = true;
+            text.innerHTML = '<span class="loading"></span> Processing...';
+        }
+
+        function hideLoading(buttonId, textId, originalText) {
+            const button = document.getElementById(buttonId);
+            const text = document.getElementById(textId);
+            button.disabled = false;
+            text.textContent = originalText;
+        }
+
+        function showResult(elementId, message, type = 'info') {
+            const resultDiv = document.getElementById(elementId);
+            resultDiv.innerHTML = `
+                <div class="result-header">
+                    <div class="result-icon">${getResultIcon(type)}</div>
+                    <div class="result-title">${getResultTitle(type)}</div>
+                </div>
+                <div class="result-message">${message}</div>
+            `;
+            resultDiv.className = `result ${type}`;
+        }
+
+        function getResultIcon(type) {
+            switch(type) {
+                case 'critical': return '🚨';
+                case 'success': return '✅';
+                case 'warning': return '⚠️';
+                case 'info': return 'ℹ️';
+                default: return 'ℹ️';
+            }
+        }
+
+        function getResultTitle(type) {
+            switch(type) {
+                case 'critical': return 'CRITICAL ALERT';
+                case 'success': return 'SUCCESS';
+                case 'warning': return 'WARNING';
+                case 'info': return 'INFORMATION';
+                default: return 'RESULT';
+            }
+        }
+
+        // Emergency Check Function
+        document.getElementById('emergencyCheckBtn').addEventListener('click', async function() {
+            const patientId = document.getElementById('patientId').value;
+            const situation = document.getElementById('situation').value;
+
+            showLoading('emergencyCheckBtn', 'emergencyBtnText');
+
+            // Simulate API delay
+            await new Promise(resolve => setTimeout(resolve, 1500));
+
+            // Simulated response based on patient data
+            if (patientId === 'patient_001' && situation === 'cardiac_arrest') {
+                showResult('emergencyResult', `
+                    <strong>🚨 DNR DIRECTIVE FOUND</strong><br>
+                    Action: <strong>DO NOT RESUSCITATE</strong><br>
+                    Signature: ✅ Verified<br>
+                    Response Time: <strong>0.8 seconds</strong>
+                `, 'critical');
+            } else if (patientId === 'patient_001') {
+                showResult('emergencyResult', `
+                    <strong>✅ PROCEED WITH TREATMENT</strong><br>
+                    No DNR directive for this situation<br>
+                    Signature: ✅ Verified<br>
+                    Response Time: <strong>0.8 seconds</strong>
+                `, 'success');
+            } else {
+                showResult('emergencyResult', `
+                    <strong>📋 MANUAL REVIEW REQUIRED</strong><br>
+                    No directive found for patient<br>
+                    Recommend: Contact family/physician<br>
+                    Response Time: <strong>0.8 seconds</strong>
+                `, 'warning');
+            }
+
+            hideLoading('emergencyCheckBtn', 'emergencyBtnText', 'Check Emergency Directive');
+        });
+
+        // AI Directive Processing Function
+        document.getElementById('processDirectiveBtn').addEventListener('click', async function() {
+            const directiveText = document.getElementById('directiveText').value;
+
+            showLoading('processDirectiveBtn', 'directiveBtnText');
+
+            // Simulate AI processing delay
+            await new Promise(resolve => setTimeout(resolve, 2000));
+
+            // Simple AI simulation
+            const isDNR = directiveText.toLowerCase().includes('not') && 
+                         (directiveText.toLowerCase().includes('resuscitat') || 
+                          directiveText.toLowerCase().includes('revive'));
+            
+            const hasOrganDonation = directiveText.toLowerCase().includes('organ') || 
+                                   directiveText.toLowerCase().includes('donate');
+
+            const confidence = Math.random() * 0.15 + 0.85; // 85-100% confidence
+
+            showResult('directiveResult', `
+                <strong>🧠 AI Analysis Complete</strong><br>
+                DNR Detected: ${isDNR ? '✅ Yes' : '❌ No'}<br>
+                Organ Donation: ${hasOrganDonation ? '✅ Detected' : '❌ Not mentioned'}<br>
+                Confidence Score: <strong>${Math.round(confidence * 100)}%</strong><br>
+                Processing Time: <strong>1.2 seconds</strong>
+            `, 'success');
+
+            hideLoading('processDirectiveBtn', 'directiveBtnText', 'Process with AI');
+        });
+
+        // Organ Coordination Function
+        document.getElementById('executeOrganBtn').addEventListener('click', async function() {
+            const patientId = document.getElementById('organPatientId').value;
+
+            showLoading('executeOrganBtn', 'organBtnText');
+
+            // Simulate processing delay
+            await new Promise(resolve => setTimeout(resolve, 1800));
+
+            // Simulated response based on patient data
+            if (patientId === 'patient_002') {
+                showResult('organResult', `
+                    <strong>🫀 Organ Coordination Initiated</strong><br>
+                    Organs: heart, liver, kidneys<br>
+                    Hospitals Notified: <strong>3</strong><br>
+                    Estimated Matches: <strong>2</strong><br>
+                    Status: ✅ Active Coordination
+                `, 'success');
+            } else {
+                showResult('organResult', `
+                    <strong>📋 No Organ Donation Directive</strong><br>
+                    Patient has not consented to organ donation<br>
+                    Action: No coordination required<br>
+                    Status: ✅ Directive Respected
+                `, 'warning');
+            }
+
+            hideLoading('executeOrganBtn', 'organBtnText', 'Execute Organ Directive');
+        });
+    </script>
+</body>
+</html>

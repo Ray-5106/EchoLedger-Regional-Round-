@@ -1,0 +1,51 @@
+type ExtractedDirective = record {
+    directive_type: text;
+    conditions: vec text;
+    confidence: float32;
+    extracted_text: text;
+    medical_terminology: vec text;
+};
+
+type MedicalDirectiveAnalysis = record {
+    confidence_score: float32;
+    extracted_directives: vec ExtractedDirective;
+    contraindications: vec text;
+    legal_validity_score: float32;
+    requires_human_review: bool;
+    processing_method: text;
+    processing_cost_usd: float32;
+    processing_time_ms: nat64;
+};
+
+type BioBERTRiskAssessment = record {
+    recovery_probability: float32;
+    risk_factors: vec text;
+    contraindications: vec text;
+    recommended_actions: vec text;
+    confidence_score: float32;
+};
+
+type ProcessingStats = record {
+    total_directives_processed: nat32;
+    on_chain_processing_count: nat32;
+    hybrid_processing_count: nat32;
+    average_confidence_score: float32;
+    cost_savings_vs_full_llm: float32;
+    average_processing_time_ms: nat32;
+};
+
+service : {
+    // Main function for processing medical directives with hybrid AI
+    process_medical_directive: (text, text) -> (variant { Ok: MedicalDirectiveAnalysis; Err: text });
+    
+    // BioBERT-style risk assessment
+    assess_patient_risk: (text, text, text) -> (variant { Ok: BioBERTRiskAssessment; Err: text });
+    
+    // Query functions
+    get_supported_directive_types: () -> (vec text) query;
+    get_processing_statistics: () -> (ProcessingStats) query;
+    get_medical_terminology_categories: () -> (vec text) query;
+    
+    // Demonstrate cost efficiency
+    demonstrate_cost_efficiency: () -> (text) query;
+}
