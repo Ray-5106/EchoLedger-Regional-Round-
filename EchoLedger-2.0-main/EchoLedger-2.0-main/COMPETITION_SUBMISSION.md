@@ -179,8 +179,6 @@ sh -ci "$(curl -fsSL https://internetcomputer.org/install.sh)"
 # 5. Test functionality using provided commands
 ```
 
-### **Demo the Working MVP:**
-Simply visit: https://8590a005-caf1-43bf-8e86-33eb0f9ba214.preview.emergentagent.com
 
 ---
 
@@ -222,17 +220,7 @@ Simply visit: https://8590a005-caf1-43bf-8e86-33eb0f9ba214.preview.emergentagent
 5. **Immediate Impact** - Can be deployed in hospitals tomorrow
 6. **Perfect Competition Fit** - AI track, real-world impact, ICP native
 
----
 
-## 📞 Contact & Links
-
-**Demo URL:** https://8590a005-caf1-43bf-8e86-33eb0f9ba214.preview.emergentagent.com  
-**GitHub:** Will be provided upon submission  
-**Email:** Available upon request  
-**Competition Track:** AI - Decentralized Intelligence  
-
----
 
 **🎉 Thank you WCHL 2025 judges for considering EchoLedger!**
 
-*Built with 💜 on the Internet Computer - Where every canister can save a life*
